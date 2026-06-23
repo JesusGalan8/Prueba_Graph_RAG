@@ -1,0 +1,337 @@
+{
+  "metricas": {
+    "total_preguntas": 13,
+    "score_promedio": 0.693,
+    "score_p75": 1.0,
+    "preguntas_ok": 8,
+    "preguntas_parcial": 0,
+    "preguntas_fail": 5,
+    "latencia_promedio": 45459.0,
+    "latencia_max": 197840.0,
+    "tiempo_total_s": 596.3,
+    "por_tipo": {
+      "factual": 0.869,
+      "agregacion": 0.488
+    },
+    "por_dificultad": {
+      "baja": 0.693
+    }
+  },
+  "resultados": [
+    {
+      "id": "GT-001",
+      "pregunta": "¿Quién ganó el GP de Australia en 2014?",
+      "respuesta_esperada": "Nico Rosberg ganó el GP de Australia en 2014",
+      "respuesta_obtenida": "Nico Rosberg ganó el GP de Australia en 2014.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (p:Piloto)-[r:PARTICIPO_EN]->(c:Carrera)\nWHERE c.nombre CONTAINS 'Australian' AND c.temporada = 2014 AND r.posicion_final = 1\nRETURN p.nombre + ' ' + p.apellido AS piloto, c.nombre AS carrera\nLIMIT 1",
+      "latency_ms": 197840.0,
+      "tipo": "factual",
+      "dificultad": "baja",
+      "eval": {
+        "score": 1.0,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [
+          "2014"
+        ],
+        "numeros_encontrados": 1,
+        "entidades_evaluadas": [
+          "australia",
+          "2014"
+        ],
+        "entidades_encontradas": 2
+      }
+    },
+    {
+      "id": "GT-002",
+      "pregunta": "¿Cuántas victorias tuvo Lewis Hamilton en 2019?",
+      "respuesta_esperada": "11",
+      "respuesta_obtenida": "Lewis Hamilton tuvo 11 victorias en el año 2019. En ese año, se destacó por su dominio en la pista y su habilidad para adaptarse a las condiciones climáticas cambiantes. Su éxito en 2019 contribuyó significativamente a su carrera como uno de los pilotos más exitosos de la historia de la F1.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (p:Piloto {apellido: 'Hamilton'})-[r:PARTICIPO_EN]->(c:Carrera)\nWHERE c.temporada = 2019 AND r.posicion_final = 1\nRETURN count(r) AS victorias",
+      "latency_ms": 41688.0,
+      "tipo": "agregacion",
+      "dificultad": "baja",
+      "eval": {
+        "score": 1.0,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [
+          "11"
+        ],
+        "numeros_encontrados": 1,
+        "entidades_evaluadas": [
+          "hamilton",
+          "2019"
+        ],
+        "entidades_encontradas": 2
+      }
+    },
+    {
+      "id": "GT-004",
+      "pregunta": "¿Cuántas poles tuvo Verstappen en 2023?",
+      "respuesta_esperada": "12",
+      "respuesta_obtenida": "Verstappen tuvo 13 poles en 2023.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (p:Piloto {apellido: 'Verstappen'})-[r:CLASIFICO_EN]->(c:Carrera {temporada: 2023}) WHERE r.posicion = 1 RETURN count(r) AS poles LIMIT 50",
+      "latency_ms": 23532.0,
+      "tipo": "agregacion",
+      "dificultad": "baja",
+      "eval": {
+        "score": 0.3,
+        "exactitud_numerica": 0.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [
+          "12"
+        ],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [
+          "verstappen",
+          "2023"
+        ],
+        "entidades_encontradas": 2
+      }
+    },
+    {
+      "id": "GT-006",
+      "pregunta": "¿Quién ganó el campeonato de pilotos en 2016?",
+      "respuesta_esperada": "Nico Rosberg ganó el campeonato de pilotos en 2016",
+      "respuesta_obtenida": "Nico Rosberg ganó el campeonato de pilotos en 2016. Es interesante recordar que ese año fue su primer título mundial, y lo consiguió con Mercedes, después de una intensa batalla contra Lewis Hamilton.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (p:Piloto)-[:POSICION_CAMPEONATO {posicion: 1}]->(t:Temporada) WHERE t.anio = 2016 RETURN p.nombre + ' ' + p.apellido AS ganador LIMIT 1",
+      "latency_ms": 32314.0,
+      "tipo": "factual",
+      "dificultad": "baja",
+      "eval": {
+        "score": 1.0,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [
+          "2016"
+        ],
+        "numeros_encontrados": 1,
+        "entidades_evaluadas": [
+          "2016",
+          "campeonato"
+        ],
+        "entidades_encontradas": 2
+      }
+    },
+    {
+      "id": "GT-008",
+      "pregunta": "¿Qué motor usó Red Bull en 2022?",
+      "respuesta_esperada": "RBPT (Red Bull Powertrains, derivado de Honda)",
+      "respuesta_obtenida": "Red Bull utilizó el motor RBPT en 2022.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (e:Escuderia {nombre: 'Red Bull'})-[u:USA_MOTOR]->(m:Motor)\nWHERE u.temporada_inicio <= 2022 AND u.temporada_fin >= 2022\nRETURN m.fabricante AS motor LIMIT 1",
+      "latency_ms": 25948.0,
+      "tipo": "factual",
+      "dificultad": "baja",
+      "eval": {
+        "score": 1.0,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [
+          "red bull",
+          "2022"
+        ],
+        "entidades_encontradas": 2
+      }
+    },
+    {
+      "id": "GT-010",
+      "pregunta": "¿Cuántos podios tuvo Carlos Sainz en 2022?",
+      "respuesta_esperada": "9",
+      "respuesta_obtenida": "Carlos Sainz no tuvo ningún podio en 2022.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (p:Piloto {apellido: 'Sainz'})-[r:PARTICIPO_EN]->(c:Carrera {temporada: 2022}) WHERE r.posicion_final IN [1, 2, 3] RETURN count(r) AS podios LIMIT 50",
+      "latency_ms": 29637.0,
+      "tipo": "agregacion",
+      "dificultad": "baja",
+      "eval": {
+        "score": 0.3,
+        "exactitud_numerica": 0.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [
+          "9"
+        ],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [
+          "sainz",
+          "2022"
+        ],
+        "entidades_encontradas": 2
+      }
+    },
+    {
+      "id": "GT-013",
+      "pregunta": "¿En qué circuito se disputa el GP de Bahrein?",
+      "respuesta_esperada": "Circuito Internacional de Bahrein (Sakhir)",
+      "respuesta_obtenida": "Lo siento, pero no tengo suficientes datos para responder a esta pregunta.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (c:Carrera {nombre: 'Bahrain Grand Prix'})-[:SE_CORRIO_EN]->(ci:Circuito)\nRETURN ci.nombre AS circuito\nLIMIT 1",
+      "latency_ms": 22558.0,
+      "tipo": "factual",
+      "dificultad": "baja",
+      "eval": {
+        "score": 0.08,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 0.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [
+          "bahrein"
+        ],
+        "entidades_encontradas": 0
+      }
+    },
+    {
+      "id": "GT-014",
+      "pregunta": "¿Qué piloto ganó más carreras en 2023?",
+      "respuesta_esperada": "Max Verstappen con 19 victorias",
+      "respuesta_obtenida": "Lo siento, pero no tengo datos suficientes para responder esto. El contexto proporcionado indica un error de consulta en la base de datos y no contiene información sobre el resultado de las carreras en 2023.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (p:Piloto)-[r:PARTICIPO_EN]->(c:Carrera)\nWHERE c.temporada = 2023 AND r.posicion_final = 1\nWITH p, COUNT(r) AS victorias\nGROUP BY p.nombre + ' ' + p.apellido\nORDER BY victorias DESC\nRETURN p.nombre + ' ' + p.apellido AS piloto, victorias AS cantidad_victorias\nLIMIT 1",
+      "latency_ms": 50346.0,
+      "tipo": "agregacion",
+      "dificultad": "baja",
+      "eval": {
+        "score": 0.03,
+        "exactitud_numerica": 0.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [
+          "19"
+        ],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [
+          "2023"
+        ],
+        "entidades_encontradas": 1
+      }
+    },
+    {
+      "id": "GT-015",
+      "pregunta": "¿Cuántos puntos hizo Leclerc en la temporada 2022?",
+      "respuesta_esperada": "308 puntos",
+      "respuesta_obtenida": "Leclerc obtuvo 290 puntos en la temporada 2022.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (p:Piloto {apellido: 'Leclerc'})-[r:PARTICIPO_EN]->(c:Carrera {temporada: 2022}) RETURN sum(r.puntos) AS puntos LIMIT 1",
+      "latency_ms": 23750.0,
+      "tipo": "agregacion",
+      "dificultad": "baja",
+      "eval": {
+        "score": 0.3,
+        "exactitud_numerica": 0.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [
+          "308"
+        ],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [
+          "leclerc",
+          "2022"
+        ],
+        "entidades_encontradas": 2
+      }
+    },
+    {
+      "id": "GT-019",
+      "pregunta": "¿En qué año se incorporó Haas a la F1?",
+      "respuesta_esperada": "2016",
+      "respuesta_obtenida": "Haas se incorporó a la F1 en el año 2016.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (e:Escuderia {nombre: 'Haas'})<-[:CORRIO_PARA]-(p:Piloto) RETURN p.temporada AS año_incorporacion ORDER BY p.temporada ASC LIMIT 1",
+      "latency_ms": 41641.0,
+      "tipo": "factual",
+      "dificultad": "baja",
+      "eval": {
+        "score": 1.0,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [
+          "2016"
+        ],
+        "numeros_encontrados": 1,
+        "entidades_evaluadas": [
+          "haas"
+        ],
+        "entidades_encontradas": 1
+      }
+    },
+    {
+      "id": "GT-020",
+      "pregunta": "¿Quién fue campeón de constructores en 2021?",
+      "respuesta_esperada": "Mercedes fue campeón de constructores en 2021",
+      "respuesta_obtenida": "La Mercedes fue la campeona de constructores en el año 2021, logrando un título consecutivo después de su victoria en 2020. Este éxito se debió en gran medida a la habilidad y consistencia de sus pilotos, Lewis Hamilton y Valtteri Bottas, quienes contribuyeron significativamente al dominio del equipo en ese año.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (e:Escuderia)-[:POSICION_CONSTRUCTORES {temporada: 2021, posicion: 1}]->(t:Temporada) \nRETURN e.nombre AS escuderia_campeon\nLIMIT 1",
+      "latency_ms": 38747.0,
+      "tipo": "factual",
+      "dificultad": "baja",
+      "eval": {
+        "score": 1.0,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [
+          "2021"
+        ],
+        "numeros_encontrados": 1,
+        "entidades_evaluadas": [
+          "2021",
+          "constructores"
+        ],
+        "entidades_encontradas": 2
+      }
+    },
+    {
+      "id": "GT-021",
+      "pregunta": "¿Cuántos grandes premios se disputaron en la temporada 2022?",
+      "respuesta_esperada": "22",
+      "respuesta_obtenida": "La temporada de Fórmula 1 de 2022 tuvo 22 grandes premios, lo que significa que fueron 22 las carreras oficiales del campeonato mundial en ese año.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (c:Carrera)-[:PERTENECE_A]->(t:Temporada {anio: 2022}) RETURN count(c) AS grand_premios LIMIT 1",
+      "latency_ms": 26865.0,
+      "tipo": "agregacion",
+      "dificultad": "baja",
+      "eval": {
+        "score": 1.0,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [
+          "22"
+        ],
+        "numeros_encontrados": 1,
+        "entidades_evaluadas": [
+          "2022"
+        ],
+        "entidades_encontradas": 1
+      }
+    },
+    {
+      "id": "GT-022",
+      "pregunta": "¿Qué pilotos corrieron para McLaren en 2019?",
+      "respuesta_esperada": "Carlos Sainz y Lando Norris",
+      "respuesta_obtenida": "Lando Norris tuvo un gran debut con McLaren en 2019, siendo parte del equipo desde el comienzo de la temporada. Carlos Sainz Jr., por su parte, se unió a McLaren en 2021, pero en 2019 estaba corriendo para Ferrari.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (p:Piloto)-[:CORRIO_PARA {temporada: 2019}]->(e:Escuderia {nombre: 'McLaren'})\nRETURN p.nombre + ' ' + p.apellido AS piloto\nLIMIT 50",
+      "latency_ms": 36101.0,
+      "tipo": "factual",
+      "dificultad": "baja",
+      "eval": {
+        "score": 1.0,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [
+          "mclaren",
+          "2019"
+        ],
+        "entidades_encontradas": 2
+      }
+    }
+  ]
+}

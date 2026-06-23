@@ -1,0 +1,272 @@
+[
+  {
+    "id": "GT-001",
+    "pregunta": "¿Quién ganó el GP de Australia en 2014?",
+    "respuesta_esperada": "Nico Rosberg ganó el GP de Australia en 2014",
+    "tipo": "factual",
+    "entidades": ["Australia", "2014"],
+    "dificultad": "baja",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-002",
+    "pregunta": "¿Cuántas victorias tuvo Lewis Hamilton en 2019?",
+    "respuesta_esperada": "11",
+    "tipo": "agregacion",
+    "entidades": ["Hamilton", "2019"],
+    "dificultad": "baja",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-003",
+    "pregunta": "¿Qué pilotos ganaron una carrera saliendo desde la posición 10 o peor, usando motores Mercedes pero corriendo para una escudería cliente?",
+    "respuesta_esperada": "Jenson Button (Force India), Sergio Perez (Force India/Racing Point), Lance Stroll (Racing Point), Esteban Ocon (Force India)",
+    "tipo": "multi-hop",
+    "entidades": ["Mercedes", "cliente"],
+    "dificultad": "alta",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-004",
+    "pregunta": "¿Cuántas poles tuvo Verstappen en 2023?",
+    "respuesta_esperada": "12",
+    "tipo": "agregacion",
+    "entidades": ["Verstappen", "2023"],
+    "dificultad": "baja",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-005",
+    "pregunta": "¿Para qué equipos corrió Fernando Alonso entre 2014 y 2024?",
+    "respuesta_esperada": "Ferrari (2014), McLaren (2015-2017), Renault/Alpine (2021-2022), Aston Martin (2023-2024)",
+    "tipo": "temporal",
+    "entidades": ["Alonso"],
+    "dificultad": "media",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-006",
+    "pregunta": "¿Quién ganó el campeonato de pilotos en 2016?",
+    "respuesta_esperada": "Nico Rosberg ganó el campeonato de pilotos en 2016",
+    "tipo": "factual",
+    "entidades": ["2016", "campeonato"],
+    "dificultad": "baja",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-007",
+    "pregunta": "¿Cuántas carreras ganó Mercedes como escudería en 2020?",
+    "respuesta_esperada": "13",
+    "tipo": "agregacion",
+    "entidades": ["Mercedes", "2020"],
+    "dificultad": "media",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-008",
+    "pregunta": "¿Qué motor usó Red Bull en 2022?",
+    "respuesta_esperada": "RBPT (Red Bull Powertrains, derivado de Honda)",
+    "tipo": "factual",
+    "entidades": ["Red Bull", "2022"],
+    "dificultad": "baja",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-009",
+    "pregunta": "¿Quién hizo la vuelta rápida en el GP de Mónaco 2021?",
+    "respuesta_esperada": "Lando Norris",
+    "tipo": "factual",
+    "entidades": ["Monaco", "2021"],
+    "dificultad": "media",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-010",
+    "pregunta": "¿Cuántos podios tuvo Carlos Sainz en 2022?",
+    "respuesta_esperada": "9",
+    "tipo": "agregacion",
+    "entidades": ["Sainz", "2022"],
+    "dificultad": "baja",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-011",
+    "pregunta": "¿Qué piloto con motor Honda ganó una carrera en 2019?",
+    "respuesta_esperada": "Max Verstappen (Red Bull-Honda) ganó en Austria 2019",
+    "tipo": "multi-hop",
+    "entidades": ["Honda", "2019"],
+    "dificultad": "media",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-012",
+    "pregunta": "¿Cuántas victorias diferentes tuvieron los pilotos de Ferrari entre 2014 y 2024?",
+    "respuesta_esperada": "Raikkonen, Vettel, Leclerc, Sainz",
+    "tipo": "multi-hop",
+    "entidades": ["Ferrari"],
+    "dificultad": "media",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-013",
+    "pregunta": "¿En qué circuito se disputa el GP de Bahrein?",
+    "respuesta_esperada": "Circuito Internacional de Bahrein (Sakhir)",
+    "tipo": "factual",
+    "entidades": ["Bahrein"],
+    "dificultad": "baja",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-014",
+    "pregunta": "¿Qué piloto ganó más carreras en 2023?",
+    "respuesta_esperada": "Max Verstappen con 19 victorias",
+    "tipo": "agregacion",
+    "entidades": ["2023"],
+    "dificultad": "baja",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-015",
+    "pregunta": "¿Cuántos puntos hizo Leclerc en la temporada 2022?",
+    "respuesta_esperada": "308 puntos",
+    "tipo": "agregacion",
+    "entidades": ["Leclerc", "2022"],
+    "dificultad": "baja",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-016",
+    "pregunta": "¿Quién ganó las primeras 3 carreras de la temporada 2016?",
+    "respuesta_esperada": "Nico Rosberg ganó Australia, Bahrein y China 2016",
+    "tipo": "temporal",
+    "entidades": ["2016"],
+    "dificultad": "media",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-017",
+    "pregunta": "¿Qué escuderías usaron motor Ferrari en 2020?",
+    "respuesta_esperada": "Ferrari, Haas, Alfa Romeo",
+    "tipo": "multi-hop",
+    "entidades": ["Ferrari", "2020"],
+    "dificultad": "media",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-018",
+    "pregunta": "¿Cuántas pole positions tuvo Hamilton en toda la era híbrida (2014-2024)?",
+    "respuesta_esperada": "Aproximadamente 70+",
+    "tipo": "agregacion",
+    "entidades": ["Hamilton"],
+    "dificultad": "media",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-019",
+    "pregunta": "¿En qué año se incorporó Haas a la F1?",
+    "respuesta_esperada": "2016",
+    "tipo": "factual",
+    "entidades": ["Haas"],
+    "dificultad": "baja",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-020",
+    "pregunta": "¿Quién fue campeón de constructores en 2021?",
+    "respuesta_esperada": "Mercedes fue campeón de constructores en 2021",
+    "tipo": "factual",
+    "entidades": ["2021", "constructores"],
+    "dificultad": "baja",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-021",
+    "pregunta": "¿Cuántos grandes premios se disputaron en la temporada 2022?",
+    "respuesta_esperada": "22",
+    "tipo": "agregacion",
+    "entidades": ["2022"],
+    "dificultad": "baja",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-022",
+    "pregunta": "¿Qué pilotos corrieron para McLaren en 2019?",
+    "respuesta_esperada": "Carlos Sainz y Lando Norris",
+    "tipo": "factual",
+    "entidades": ["McLaren", "2019"],
+    "dificultad": "baja",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-023",
+    "pregunta": "¿Quién ganó el GP de Italia 2020 (Monza)?",
+    "respuesta_esperada": "Pierre Gasly (AlphaTauri-Honda)",
+    "tipo": "factual",
+    "entidades": ["Italia", "2020", "Monza"],
+    "dificultad": "media",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-024",
+    "pregunta": "¿Cuántos abandonos tuvo Alonso en 2023?",
+    "respuesta_esperada": "0 o pocos, ya que tuvo una temporada muy sólida",
+    "tipo": "agregacion",
+    "entidades": ["Alonso", "2023"],
+    "dificultad": "media",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-025",
+    "pregunta": "¿Qué pilotos corrieron para más de 3 equipos diferentes en la era híbrida?",
+    "respuesta_esperada": "Pilotos como Ricciardo, Hulkenberg, etc.",
+    "tipo": "multi-hop",
+    "entidades": [],
+    "dificultad": "alta",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-026",
+    "pregunta": "¿Cuántas vueltas rápidas hizo Verstappen en 2023?",
+    "respuesta_esperada": "Aproximadamente 7-9",
+    "tipo": "agregacion",
+    "entidades": ["Verstappen", "2023"],
+    "dificultad": "media",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-027",
+    "pregunta": "¿Qué circuito es el más rápido en promedio?",
+    "respuesta_esperada": "Monza (Italia)",
+    "tipo": "factual",
+    "entidades": ["circuito"],
+    "dificultad": "media",
+    "requiere_cypher": false
+  },
+  {
+    "id": "GT-028",
+    "pregunta": "¿Quién ganó más carreras con motor Renault en escudería cliente?",
+    "respuesta_esperada": "Resultados con motor Renault en Toro Rosso, etc.",
+    "tipo": "multi-hop",
+    "entidades": ["Renault", "cliente"],
+    "dificultad": "alta",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-029",
+    "pregunta": "¿En cuántas temporadas compitió Kimi Raikkonen en la era híbrida?",
+    "respuesta_esperada": "7 (2014-2021)",
+    "tipo": "agregacion",
+    "entidades": ["Raikkonen"],
+    "dificultad": "media",
+    "requiere_cypher": true
+  },
+  {
+    "id": "GT-030",
+    "pregunta": "¿Qué piloto ganó más carreras con motor Ferrari sin ser piloto de Ferrari?",
+    "respuesta_esperada": "No hubo victorias de escuderías cliente con motor Ferrari en la era híbrida",
+    "tipo": "multi-hop",
+    "entidades": ["Ferrari", "cliente"],
+    "dificultad": "alta",
+    "requiere_cypher": true
+  }
+]
