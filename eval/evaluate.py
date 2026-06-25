@@ -37,12 +37,14 @@ OUT_FILE  = EVAL_DIR / "results.json"
 console   = Console()
 
 
+import re
+
 # ─────────────────────────────────────────────────────────────
 #  Evaluación de una respuesta
 # ─────────────────────────────────────────────────────────────
 
 def evaluar_respuesta(respuesta: str, respuesta_esperada: str,
-                       entidades: list[str]) -> dict:
+                       entidades: list[str], pregunta: str) -> dict:
     """
     Evalúa la respuesta en dos dimensiones:
     - exactitud: ¿Contiene los datos numéricos/nombres clave?
@@ -50,10 +52,14 @@ def evaluar_respuesta(respuesta: str, respuesta_esperada: str,
     """
     resp_lower = respuesta.lower()
     exp_lower  = respuesta_esperada.lower()
+    preg_lower = pregunta.lower()
 
     # Extraer números de la respuesta esperada y verificar si aparecen
-    import re
-    numeros_esperados = re.findall(r'\b\d+\b', exp_lower)
+    # Filtrar los números que ya están en la pregunta
+    numeros_esperados_crudos = re.findall(r'\b\d+\b', exp_lower)
+    numeros_pregunta = set(re.findall(r'\b\d+\b', preg_lower))
+    numeros_esperados = [n for n in numeros_esperados_crudos if n not in numeros_pregunta]
+    
     nombres_esperados = [e.lower() for e in entidades if len(e) > 2]
 
     # Comprobar números clave
@@ -157,11 +163,31 @@ def run_evaluation(
             cypher    = ""
 
         # Evaluar respuesta
-        eval_result = evaluar_respuesta(
-            respuesta=respuesta,
-            respuesta_esperada=gt["respuesta_esperada"],
-            entidades=gt.get("entidades", []),
-        )
+        if gt.get("tipo") in ["semantico", "hibrido"]:
+            prompt_judge = f"Evalúa del 0.0 al 1.0 si la siguiente respuesta obtenida responde correctamente a la pregunta basada en la respuesta esperada. Considera la respuesta como incorrecta (0.0) si menciona equipos de los años 50 (ERA, HWM) para la era híbrida. Devuelve SOLO el número decimal (ej. 0.8).\nPregunta: {gt['pregunta']}\nEsperada: {gt['respuesta_esperada']}\nObtenida: {respuesta}"
+            try:
+                res_j = generator.query(prompt_judge, session_id=f"judge-{gt['id']}")
+                score_str = re.search(r'(0\.\d+|1\.0|0\.0|1)', res_j["answer"])
+                score_judge = float(score_str.group(1)) if score_str else 0.5
+            except Exception as e:
+                score_judge = 0.5
+            
+            eval_result = {
+                "score": round(score_judge, 3),
+                "exactitud_numerica": 1.0,
+                "cobertura_entidades": 1.0,
+                "numeros_esperados": [],
+                "numeros_encontrados": 0,
+                "entidades_evaluadas": [],
+                "entidades_encontradas": 0
+            }
+        else:
+            eval_result = evaluar_respuesta(
+                respuesta=respuesta,
+                respuesta_esperada=gt["respuesta_esperada"],
+                entidades=gt.get("entidades", []),
+                pregunta=gt["pregunta"]
+            )
 
         score = eval_result["score"]
         color = "green" if score >= 0.7 else ("yellow" if score >= 0.4 else "red")

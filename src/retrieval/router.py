@@ -30,12 +30,14 @@ CYPHER_PATTERNS = [
     r"\b(para qué|para que|corrió|corrio|equipo)\b",
 ]
 
-# Patrones que sugieren búsqueda semántica (conceptos difusos)
+# Patrones que sugieren búsqueda semántica (conceptos difusos, comunidades)
 VECTOR_PATTERNS = [
     r"\b(mejor|mejores|más dominante|dominación|estilo)\b",
     r"\b(similar|parecido|como|recuerda)\b",
     r"\b(cuéntame|cuentame|explícame|explicame|háblame)\b",
     r"\b(historia|legado|impacto|influencia)\b",
+    r"\b(tendencias|tendencia|patrones|patrón|patron|estrategias|estrategia)\b",
+    r"\b(en general|globalmente|resumen|grupos)\b",
 ]
 
 

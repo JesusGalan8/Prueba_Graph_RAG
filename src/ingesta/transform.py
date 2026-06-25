@@ -4,6 +4,8 @@ transform.py — Limpia, normaliza y enriquece los DataFrames extraídos de F1DB
 import pandas as pd
 import numpy as np
 
+from src.config import SEASON_START, SEASON_END
+
 def _safe_int(val, default=None):
     try:
         if pd.isna(val):
@@ -192,12 +194,32 @@ def transform_all(dfs: dict) -> dict:
     dfs["constructors"] = clean_constructors(dfs["constructors"])
     dfs["circuits"]     = clean_circuits(dfs["circuits"])
     dfs["races"]        = clean_races(dfs["races"])
+    
+    # --- FILTRADO POR AÑOS (V2) ---
+    races_mask = (dfs["races"]["temporada"] >= SEASON_START) & (dfs["races"]["temporada"] <= SEASON_END)
+    dfs["races"] = dfs["races"][races_mask].copy()
+    valid_race_ids = set(dfs["races"]["race_id"])
+
     dfs["results"]      = clean_results(dfs["results"])
+    dfs["results"] = dfs["results"][dfs["results"]["race_id"].isin(valid_race_ids)].copy()
 
     dfs["qualifying"] = clean_qualifying(dfs.get("qualifying"))
+    if dfs["qualifying"] is not None:
+        dfs["qualifying"] = dfs["qualifying"][dfs["qualifying"]["race_id"].isin(valid_race_ids)].copy()
+
     dfs["driver_standings"] = clean_standings(dfs.get("driver_standings"), True)
+    if dfs["driver_standings"] is not None:
+        ds_mask = (dfs["driver_standings"]["temporada"] >= SEASON_START) & (dfs["driver_standings"]["temporada"] <= SEASON_END)
+        dfs["driver_standings"] = dfs["driver_standings"][ds_mask].copy()
+
     dfs["constructor_standings"] = clean_standings(dfs.get("constructor_standings"), False)
+    if dfs["constructor_standings"] is not None:
+        cs_mask = (dfs["constructor_standings"]["temporada"] >= SEASON_START) & (dfs["constructor_standings"]["temporada"] <= SEASON_END)
+        dfs["constructor_standings"] = dfs["constructor_standings"][cs_mask].copy()
+
     dfs["pit_stops"] = clean_pit_stops(dfs.get("pit_stops"))
+    if dfs["pit_stops"] is not None:
+        dfs["pit_stops"] = dfs["pit_stops"][dfs["pit_stops"]["race_id"].isin(valid_race_ids)].copy()
 
     dfs["results_enriched"] = enrich_with_motors(
         results=dfs["results"],

@@ -54,6 +54,7 @@ F1DB_CSV_FILES = [
 
 # ── Índices de Neo4j ─────────────────────────────────────────
 VECTOR_INDEX_NAME   = "f1_vector_index"
+VECTOR_INDEX_COMMUNITY = "f1_community_vector_index"
 FULLTEXT_INDEX_NAME = "f1_fulltext_index"
 VECTOR_DIMENSIONS   = 768    # nomic-embed-text produce vectores de 768 dims
 

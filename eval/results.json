@@ -1,20 +1,26 @@
 {
   "metricas": {
-    "total_preguntas": 13,
-    "score_promedio": 0.693,
+    "total_preguntas": 30,
+    "score_promedio": 0.623,
     "score_p75": 1.0,
-    "preguntas_ok": 8,
-    "preguntas_parcial": 0,
-    "preguntas_fail": 5,
-    "latencia_promedio": 45459.0,
-    "latencia_max": 197840.0,
-    "tiempo_total_s": 596.3,
+    "preguntas_ok": 16,
+    "preguntas_parcial": 3,
+    "preguntas_fail": 11,
+    "latencia_promedio": 83801.0,
+    "latencia_max": 411840.0,
+    "tiempo_total_s": 3579.5,
     "por_tipo": {
+      "agregacion": 0.407,
+      "multi-hop": 0.54,
+      "hibrido": 0.6,
       "factual": 0.869,
-      "agregacion": 0.488
+      "temporal": 0.65,
+      "semantico": 0.643
     },
     "por_dificultad": {
-      "baja": 0.693
+      "baja": 0.603,
+      "media": 0.745,
+      "alta": 0.22
     }
   },
   "resultados": [
@@ -25,17 +31,15 @@
       "respuesta_obtenida": "Nico Rosberg ganó el GP de Australia en 2014.",
       "retriever": "CYPHER",
       "cypher": "MATCH (p:Piloto)-[r:PARTICIPO_EN]->(c:Carrera)\nWHERE c.nombre CONTAINS 'Australian' AND c.temporada = 2014 AND r.posicion_final = 1\nRETURN p.nombre + ' ' + p.apellido AS piloto, c.nombre AS carrera\nLIMIT 1",
-      "latency_ms": 197840.0,
+      "latency_ms": 256838.0,
       "tipo": "factual",
       "dificultad": "baja",
       "eval": {
         "score": 1.0,
         "exactitud_numerica": 1.0,
         "cobertura_entidades": 1.0,
-        "numeros_esperados": [
-          "2014"
-        ],
-        "numeros_encontrados": 1,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
         "entidades_evaluadas": [
           "australia",
           "2014"
@@ -47,10 +51,10 @@
       "id": "GT-002",
       "pregunta": "¿Cuántas victorias tuvo Lewis Hamilton en 2019?",
       "respuesta_esperada": "11",
-      "respuesta_obtenida": "Lewis Hamilton tuvo 11 victorias en el año 2019. En ese año, se destacó por su dominio en la pista y su habilidad para adaptarse a las condiciones climáticas cambiantes. Su éxito en 2019 contribuyó significativamente a su carrera como uno de los pilotos más exitosos de la historia de la F1.",
+      "respuesta_obtenida": "Lewis Hamilton obtuvo 11 victorias en la era híbrida de Fórmula 1, y específicamente en el año 2019.",
       "retriever": "CYPHER",
       "cypher": "MATCH (p:Piloto {apellido: 'Hamilton'})-[r:PARTICIPO_EN]->(c:Carrera)\nWHERE c.temporada = 2019 AND r.posicion_final = 1\nRETURN count(r) AS victorias",
-      "latency_ms": 41688.0,
+      "latency_ms": 37724.0,
       "tipo": "agregacion",
       "dificultad": "baja",
       "eval": {
@@ -69,19 +73,42 @@
       }
     },
     {
+      "id": "GT-003",
+      "pregunta": "¿Qué pilotos ganaron una carrera saliendo desde la posición 10 o peor, usando motores Mercedes pero corriendo para una escudería cliente?",
+      "respuesta_esperada": "Jenson Button (Force India), Sergio Perez (Force India/Racing Point), Lance Stroll (Racing Point), Esteban Ocon (Force India)",
+      "respuesta_obtenida": "Lo siento, pero no tengo suficiente información en el contexto proporcionado para responder a esta pregunta. La base de datos parece estar vacía o no contener los resultados necesarios para dar una respuesta precisa.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (p:Piloto)-[r:PARTICIPO_EN]->(c:Carrera),\n      (e:Escuderia {nombre: 'Mercedes'})-[:USA_MOTOR]->(m:Motor {fabricante: 'Mercedes'}),\n      (p)-[:CORRIO_PARA]->(e)\nWHERE r.posicion_parrilla >= 10 AND e.nombre <> 'Mercedes' AND r.posicion_final = 1\nRETURN p.nombre + ' ' + p.apellido AS piloto, c.nombre AS carrera, r.posicion_parrilla AS salio_desde\nLIMIT 50",
+      "latency_ms": 102879.0,
+      "tipo": "multi-hop",
+      "dificultad": "alta",
+      "eval": {
+        "score": 0.08,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 0.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [
+          "mercedes",
+          "cliente"
+        ],
+        "entidades_encontradas": 0
+      }
+    },
+    {
       "id": "GT-004",
       "pregunta": "¿Cuántas poles tuvo Verstappen en 2023?",
       "respuesta_esperada": "12",
-      "respuesta_obtenida": "Verstappen tuvo 13 poles en 2023.",
+      "respuesta_obtenida": "Verstappen obtuvo 13 poles.",
       "retriever": "CYPHER",
-      "cypher": "MATCH (p:Piloto {apellido: 'Verstappen'})-[r:CLASIFICO_EN]->(c:Carrera {temporada: 2023}) WHERE r.posicion = 1 RETURN count(r) AS poles LIMIT 50",
-      "latency_ms": 23532.0,
+      "cypher": "MATCH (p:Piloto {apellido: 'Verstappen'})-[r:CLASIFICO_EN]->(c:Carrera {temporada: 2023}) WHERE r.posicion = 1 RETURN count(r) AS poles LIMIT 1",
+      "latency_ms": 39670.0,
       "tipo": "agregacion",
       "dificultad": "baja",
       "eval": {
-        "score": 0.3,
+        "score": 0.15,
         "exactitud_numerica": 0.0,
-        "cobertura_entidades": 1.0,
+        "cobertura_entidades": 0.5,
         "numeros_esperados": [
           "12"
         ],
@@ -90,27 +117,53 @@
           "verstappen",
           "2023"
         ],
-        "entidades_encontradas": 2
+        "entidades_encontradas": 1
+      }
+    },
+    {
+      "id": "GT-005",
+      "pregunta": "¿Para qué equipos corrió Fernando Alonso entre 2014 y 2024?",
+      "respuesta_esperada": "Ferrari (2014), McLaren (2015-2017), Renault/Alpine (2021-2022), Aston Martin (2023-2024)",
+      "respuesta_obtenida": "Fernando Alonso corrió para los equipos McLaren y Alpine entre 2014 y 2024.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (p:Piloto {apellido: 'Alonso'})-[r:CORRIO_PARA]->(e:Escuderia) WHERE r.temporada >= 2014 AND r.temporada <= 2024 RETURN DISTINCT e.nombre",
+      "latency_ms": 38820.0,
+      "tipo": "temporal",
+      "dificultad": "media",
+      "eval": {
+        "score": 0.3,
+        "exactitud_numerica": 0.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [
+          "2015",
+          "2017",
+          "2021",
+          "2022",
+          "2023"
+        ],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [
+          "alonso"
+        ],
+        "entidades_encontradas": 1
       }
     },
     {
       "id": "GT-006",
       "pregunta": "¿Quién ganó el campeonato de pilotos en 2016?",
       "respuesta_esperada": "Nico Rosberg ganó el campeonato de pilotos en 2016",
-      "respuesta_obtenida": "Nico Rosberg ganó el campeonato de pilotos en 2016. Es interesante recordar que ese año fue su primer título mundial, y lo consiguió con Mercedes, después de una intensa batalla contra Lewis Hamilton.",
+      "respuesta_obtenida": "Nico Rosberg ganó el campeonato de pilotos en 2016.",
       "retriever": "CYPHER",
-      "cypher": "MATCH (p:Piloto)-[:POSICION_CAMPEONATO {posicion: 1}]->(t:Temporada) WHERE t.anio = 2016 RETURN p.nombre + ' ' + p.apellido AS ganador LIMIT 1",
-      "latency_ms": 32314.0,
+      "cypher": "MATCH (p:Piloto)-[:POSICION_CAMPEONATO {temporada: 2016, posicion: 1}]->(t:Temporada) RETURN p.nombre + ' ' + p.apellido AS ganador LIMIT 1",
+      "latency_ms": 39425.0,
       "tipo": "factual",
       "dificultad": "baja",
       "eval": {
         "score": 1.0,
         "exactitud_numerica": 1.0,
         "cobertura_entidades": 1.0,
-        "numeros_esperados": [
-          "2016"
-        ],
-        "numeros_encontrados": 1,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
         "entidades_evaluadas": [
           "2016",
           "campeonato"
@@ -119,13 +172,38 @@
       }
     },
     {
+      "id": "GT-007",
+      "pregunta": "¿Cuántas carreras ganó Mercedes como escudería en 2020?",
+      "respuesta_esperada": "13",
+      "respuesta_obtenida": "Mercedes ganó 13 carreras en 2020.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (e:Escuderia {nombre: 'Mercedes'})<-[:CORRIO_PARA {temporada: 2020}]-(p:Piloto)-[r:PARTICIPO_EN]->(c:Carrera)\nWHERE r.posicion_final = 1\nRETURN count(DISTINCT c) AS victorias",
+      "latency_ms": 64280.0,
+      "tipo": "agregacion",
+      "dificultad": "media",
+      "eval": {
+        "score": 1.0,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [
+          "13"
+        ],
+        "numeros_encontrados": 1,
+        "entidades_evaluadas": [
+          "mercedes",
+          "2020"
+        ],
+        "entidades_encontradas": 2
+      }
+    },
+    {
       "id": "GT-008",
       "pregunta": "¿Qué motor usó Red Bull en 2022?",
       "respuesta_esperada": "RBPT (Red Bull Powertrains, derivado de Honda)",
-      "respuesta_obtenida": "Red Bull utilizó el motor RBPT en 2022.",
+      "respuesta_obtenida": "Red Bull usó el motor RBPT en 2022.",
       "retriever": "CYPHER",
       "cypher": "MATCH (e:Escuderia {nombre: 'Red Bull'})-[u:USA_MOTOR]->(m:Motor)\nWHERE u.temporada_inicio <= 2022 AND u.temporada_fin >= 2022\nRETURN m.fabricante AS motor LIMIT 1",
-      "latency_ms": 25948.0,
+      "latency_ms": 36203.0,
       "tipo": "factual",
       "dificultad": "baja",
       "eval": {
@@ -142,13 +220,36 @@
       }
     },
     {
+      "id": "GT-009",
+      "pregunta": "¿Quién hizo la vuelta rápida en el GP de Mónaco 2021?",
+      "respuesta_esperada": "Lando Norris",
+      "respuesta_obtenida": "Charles Leclerc hizo la vuelta rápida en el GP de Mónaco 2021.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (p:Piloto)-[r:CLASIFICO_EN {posicion: 1}]->(c:Carrera)\nWHERE c.nombre CONTAINS 'Monaco' AND c.temporada = 2021\nRETURN p.nombre + ' ' + p.apellido AS piloto, r.q1 AS vuelta_rapida\nLIMIT 1",
+      "latency_ms": 51232.0,
+      "tipo": "factual",
+      "dificultad": "media",
+      "eval": {
+        "score": 1.0,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 0.5,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [
+          "monaco",
+          "2021"
+        ],
+        "entidades_encontradas": 1
+      }
+    },
+    {
       "id": "GT-010",
       "pregunta": "¿Cuántos podios tuvo Carlos Sainz en 2022?",
       "respuesta_esperada": "9",
-      "respuesta_obtenida": "Carlos Sainz no tuvo ningún podio en 2022.",
+      "respuesta_obtenida": "Carlos Sainz no obtuvo ningún podio en la temporada de 2022.",
       "retriever": "CYPHER",
-      "cypher": "MATCH (p:Piloto {apellido: 'Sainz'})-[r:PARTICIPO_EN]->(c:Carrera {temporada: 2022}) WHERE r.posicion_final IN [1, 2, 3] RETURN count(r) AS podios LIMIT 50",
-      "latency_ms": 29637.0,
+      "cypher": "MATCH (p:Piloto {apellido: 'Sainz'})-[r:PARTICIPO_EN]->(c:Carrera {temporada: 2022}) WHERE r.posicion_final IN [1, 2, 3] RETURN count(r) AS podios LIMIT 1",
+      "latency_ms": 42146.0,
       "tipo": "agregacion",
       "dificultad": "baja",
       "eval": {
@@ -167,13 +268,58 @@
       }
     },
     {
+      "id": "GT-011",
+      "pregunta": "¿Qué piloto con motor Honda ganó una carrera en 2019?",
+      "respuesta_esperada": "Max Verstappen (Red Bull-Honda) ganó en Austria 2019",
+      "respuesta_obtenida": "No tengo suficiente contexto para responder esto.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (p:Piloto)-[r:PARTICIPO_EN]->(c:Carrera)\nWHERE c.temporada = 2019 AND r.posicion_final = 1\n  AND (e:Escuderia {nombre: 'McLaren'})-[u:USA_MOTOR]->(m:Motor {fabricante: 'Honda'})\nRETURN p.nombre + ' ' + p.apellido AS piloto, c.nombre AS carrera, m.fabricante AS motor\nLIMIT 50",
+      "latency_ms": 60747.0,
+      "tipo": "multi-hop",
+      "dificultad": "media",
+      "eval": {
+        "score": 0.08,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 0.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [
+          "honda",
+          "2019"
+        ],
+        "entidades_encontradas": 0
+      }
+    },
+    {
+      "id": "GT-012",
+      "pregunta": "¿Cuántas victorias diferentes tuvieron los pilotos de Ferrari entre 2014 y 2024?",
+      "respuesta_esperada": "Raikkonen, Vettel, Leclerc, Sainz",
+      "respuesta_obtenida": "Los pilotos de Ferrari han obtenido un número significativo de victorias en la era híbrida, desde 2014 hasta 2024. Según mi análisis, Charles Leclerc ha logrado 15 victorias para Ferrari, mientras que Carlos Sainz Jr. tiene 5 victorias. Además, Sebastian Vettel también sumó varias victorias para el equipo italiano durante su estancia en Ferrari.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (p:Piloto)-[r:PARTICIPO_EN]->(c:Carrera)\nWHERE c.temporada >= 2014 AND c.temporada <= 2024\n  AND p-[corrio_para:CORRIO_PARA {temporada: c.temporada}]->(e:Escuderia {nombre: 'Ferrari'})\n  AND r.posicion_final = 1\nRETURN DISTINCT p.nombre + ' ' + p.apellido AS piloto, c.nombre AS carrera\nLIMIT 50",
+      "latency_ms": 92220.0,
+      "tipo": "multi-hop",
+      "dificultad": "media",
+      "eval": {
+        "score": 1.0,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [
+          "ferrari"
+        ],
+        "entidades_encontradas": 1
+      }
+    },
+    {
       "id": "GT-013",
       "pregunta": "¿En qué circuito se disputa el GP de Bahrein?",
       "respuesta_esperada": "Circuito Internacional de Bahrein (Sakhir)",
-      "respuesta_obtenida": "Lo siento, pero no tengo suficientes datos para responder a esta pregunta.",
+      "respuesta_obtenida": "Lo siento, pero no tengo suficiente información para responder a esta pregunta.",
       "retriever": "CYPHER",
-      "cypher": "MATCH (c:Carrera {nombre: 'Bahrain Grand Prix'})-[:SE_CORRIO_EN]->(ci:Circuito)\nRETURN ci.nombre AS circuito\nLIMIT 1",
-      "latency_ms": 22558.0,
+      "cypher": "MATCH (c:Carrera {nombre: 'Bahrain Grand Prix'})-[:SE_CORRIO_EN]->(ci:Circuito)\nRETURN ci.nombre AS circuito, ci.ubicacion AS ubicacion\nLIMIT 1",
+      "latency_ms": 34667.0,
       "tipo": "factual",
       "dificultad": "baja",
       "eval": {
@@ -192,16 +338,16 @@
       "id": "GT-014",
       "pregunta": "¿Qué piloto ganó más carreras en 2023?",
       "respuesta_esperada": "Max Verstappen con 19 victorias",
-      "respuesta_obtenida": "Lo siento, pero no tengo datos suficientes para responder esto. El contexto proporcionado indica un error de consulta en la base de datos y no contiene información sobre el resultado de las carreras en 2023.",
+      "respuesta_obtenida": "No tengo datos suficientes para responder esto debido a un error en la consulta de la base de datos.",
       "retriever": "CYPHER",
-      "cypher": "MATCH (p:Piloto)-[r:PARTICIPO_EN]->(c:Carrera)\nWHERE c.temporada = 2023 AND r.posicion_final = 1\nWITH p, COUNT(r) AS victorias\nGROUP BY p.nombre + ' ' + p.apellido\nORDER BY victorias DESC\nRETURN p.nombre + ' ' + p.apellido AS piloto, victorias AS cantidad_victorias\nLIMIT 1",
-      "latency_ms": 50346.0,
+      "cypher": "MATCH (p:Piloto)-[r:PARTICIPO_EN]->(c:Carrera)\nWHERE c.temporada = 2023 AND r.posicion_final = 1\nGROUP BY p.nombre, p.apellido\nORDER BY count(r) DESC\nRETURN p.nombre + ' ' + p.apellido AS piloto, count(r) AS victorias\nLIMIT 1",
+      "latency_ms": 60029.0,
       "tipo": "agregacion",
       "dificultad": "baja",
       "eval": {
-        "score": 0.03,
+        "score": 0.0,
         "exactitud_numerica": 0.0,
-        "cobertura_entidades": 1.0,
+        "cobertura_entidades": 0.0,
         "numeros_esperados": [
           "19"
         ],
@@ -209,32 +355,101 @@
         "entidades_evaluadas": [
           "2023"
         ],
-        "entidades_encontradas": 1
+        "entidades_encontradas": 0
       }
     },
     {
       "id": "GT-015",
       "pregunta": "¿Cuántos puntos hizo Leclerc en la temporada 2022?",
       "respuesta_esperada": "308 puntos",
-      "respuesta_obtenida": "Leclerc obtuvo 290 puntos en la temporada 2022.",
+      "respuesta_obtenida": "Leclerc obtuvo 308 puntos en la temporada 2022, pero según los datos proporcionados, el total de puntos es 291.0, lo que sugiere una posible diferencia o ajuste en las estadísticas. Sin embargo, no tengo suficiente información para determinar con precisión cuántos puntos exactamente hizo Leclerc en la temporada 2022.",
       "retriever": "CYPHER",
       "cypher": "MATCH (p:Piloto {apellido: 'Leclerc'})-[r:PARTICIPO_EN]->(c:Carrera {temporada: 2022}) RETURN sum(r.puntos) AS puntos LIMIT 1",
-      "latency_ms": 23750.0,
+      "latency_ms": 55712.0,
       "tipo": "agregacion",
       "dificultad": "baja",
       "eval": {
-        "score": 0.3,
-        "exactitud_numerica": 0.0,
+        "score": 0.1,
+        "exactitud_numerica": 1.0,
         "cobertura_entidades": 1.0,
         "numeros_esperados": [
           "308"
         ],
-        "numeros_encontrados": 0,
+        "numeros_encontrados": 1,
         "entidades_evaluadas": [
           "leclerc",
           "2022"
         ],
         "entidades_encontradas": 2
+      }
+    },
+    {
+      "id": "GT-016",
+      "pregunta": "¿Quién ganó las primeras 3 carreras de la temporada 2016?",
+      "respuesta_esperada": "Nico Rosberg ganó Australia, Bahrein y China 2016",
+      "respuesta_obtenida": "No se proporciona información sobre quién ganó las primeras tres carreras de la temporada 2016. La respuesta correcta no está disponible en el texto proporcionado.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (p:Piloto)-[r:PARTICIPO_EN]->(c:Carrera)\nWHERE c.temporada = 2016 AND r.posicion_final = 1\nWITH p, COLLECT(c) AS carreras_ganadas\nWHERE SIZE(carreras_ganadas) <= 3\nRETURN DISTINCT p.nombre + ' ' + p.apellido AS piloto, carreras_ganadas\nLIMIT 3",
+      "latency_ms": 411840.0,
+      "tipo": "temporal",
+      "dificultad": "media",
+      "eval": {
+        "score": 1.0,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [
+          "2016"
+        ],
+        "entidades_encontradas": 1
+      }
+    },
+    {
+      "id": "GT-017",
+      "pregunta": "¿Qué escuderías usaron motor Ferrari en 2020?",
+      "respuesta_esperada": "Ferrari, Haas, Alfa Romeo",
+      "respuesta_obtenida": "Las escuderías que usaron motor Ferrari en 2020 fueron Alfa Romeo y Ferrari.",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (e:Escuderia)-[u:USA_MOTOR]->(m:Motor)\nWHERE u.temporada_inicio <= 2020 AND u.temporada_fin >= 2020 AND m.fabricante = 'Ferrari'\nRETURN e.nombre AS escuderia\nLIMIT 50",
+      "latency_ms": 50892.0,
+      "tipo": "multi-hop",
+      "dificultad": "media",
+      "eval": {
+        "score": 1.0,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [
+          "ferrari",
+          "2020"
+        ],
+        "entidades_encontradas": 2
+      }
+    },
+    {
+      "id": "GT-018",
+      "pregunta": "¿Cuántas pole positions tuvo Hamilton en toda la era híbrida (2014-2024)?",
+      "respuesta_esperada": "Aproximadamente 70+",
+      "respuesta_obtenida": "Lewis Hamilton obtuvo 75 pole positions en toda la era híbrida (2014-2024).",
+      "retriever": "CYPHER",
+      "cypher": "MATCH (p:Piloto {apellido: 'Hamilton'})-[r:CLASIFICO_EN]->(c:Carrera) WHERE r.posicion = 1 AND c.temporada >= 2014 AND c.temporada <= 2024 RETURN count(r) AS pole_positions LIMIT 50",
+      "latency_ms": 46233.0,
+      "tipo": "agregacion",
+      "dificultad": "media",
+      "eval": {
+        "score": 0.3,
+        "exactitud_numerica": 0.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [
+          "70"
+        ],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [
+          "hamilton"
+        ],
+        "entidades_encontradas": 1
       }
     },
     {
@@ -244,7 +459,7 @@
       "respuesta_obtenida": "Haas se incorporó a la F1 en el año 2016.",
       "retriever": "CYPHER",
       "cypher": "MATCH (e:Escuderia {nombre: 'Haas'})<-[:CORRIO_PARA]-(p:Piloto) RETURN p.temporada AS año_incorporacion ORDER BY p.temporada ASC LIMIT 1",
-      "latency_ms": 41641.0,
+      "latency_ms": 38750.0,
       "tipo": "factual",
       "dificultad": "baja",
       "eval": {
@@ -265,59 +480,10 @@
       "id": "GT-020",
       "pregunta": "¿Quién fue campeón de constructores en 2021?",
       "respuesta_esperada": "Mercedes fue campeón de constructores en 2021",
-      "respuesta_obtenida": "La Mercedes fue la campeona de constructores en el año 2021, logrando un título consecutivo después de su victoria en 2020. Este éxito se debió en gran medida a la habilidad y consistencia de sus pilotos, Lewis Hamilton y Valtteri Bottas, quienes contribuyeron significativamente al dominio del equipo en ese año.",
+      "respuesta_obtenida": "Mercedes fue el campeón de constructores en 2021.",
       "retriever": "CYPHER",
-      "cypher": "MATCH (e:Escuderia)-[:POSICION_CONSTRUCTORES {temporada: 2021, posicion: 1}]->(t:Temporada) \nRETURN e.nombre AS escuderia_campeon\nLIMIT 1",
-      "latency_ms": 38747.0,
-      "tipo": "factual",
-      "dificultad": "baja",
-      "eval": {
-        "score": 1.0,
-        "exactitud_numerica": 1.0,
-        "cobertura_entidades": 1.0,
-        "numeros_esperados": [
-          "2021"
-        ],
-        "numeros_encontrados": 1,
-        "entidades_evaluadas": [
-          "2021",
-          "constructores"
-        ],
-        "entidades_encontradas": 2
-      }
-    },
-    {
-      "id": "GT-021",
-      "pregunta": "¿Cuántos grandes premios se disputaron en la temporada 2022?",
-      "respuesta_esperada": "22",
-      "respuesta_obtenida": "La temporada de Fórmula 1 de 2022 tuvo 22 grandes premios, lo que significa que fueron 22 las carreras oficiales del campeonato mundial en ese año.",
-      "retriever": "CYPHER",
-      "cypher": "MATCH (c:Carrera)-[:PERTENECE_A]->(t:Temporada {anio: 2022}) RETURN count(c) AS grand_premios LIMIT 1",
-      "latency_ms": 26865.0,
-      "tipo": "agregacion",
-      "dificultad": "baja",
-      "eval": {
-        "score": 1.0,
-        "exactitud_numerica": 1.0,
-        "cobertura_entidades": 1.0,
-        "numeros_esperados": [
-          "22"
-        ],
-        "numeros_encontrados": 1,
-        "entidades_evaluadas": [
-          "2022"
-        ],
-        "entidades_encontradas": 1
-      }
-    },
-    {
-      "id": "GT-022",
-      "pregunta": "¿Qué pilotos corrieron para McLaren en 2019?",
-      "respuesta_esperada": "Carlos Sainz y Lando Norris",
-      "respuesta_obtenida": "Lando Norris tuvo un gran debut con McLaren en 2019, siendo parte del equipo desde el comienzo de la temporada. Carlos Sainz Jr., por su parte, se unió a McLaren en 2021, pero en 2019 estaba corriendo para Ferrari.",
-      "retriever": "CYPHER",
-      "cypher": "MATCH (p:Piloto)-[:CORRIO_PARA {temporada: 2019}]->(e:Escuderia {nombre: 'McLaren'})\nRETURN p.nombre + ' ' + p.apellido AS piloto\nLIMIT 50",
-      "latency_ms": 36101.0,
+      "cypher": "MATCH (e:Escuderia)-[:POSICION_CONSTRUCTORES {temporada: 2021, posicion: 1}]->(t:Temporada) RETURN e.nombre AS equipo_campeon LIMIT 1",
+      "latency_ms": 35618.0,
       "tipo": "factual",
       "dificultad": "baja",
       "eval": {
@@ -327,10 +493,210 @@
         "numeros_esperados": [],
         "numeros_encontrados": 0,
         "entidades_evaluadas": [
-          "mclaren",
-          "2019"
+          "2021",
+          "constructores"
         ],
         "entidades_encontradas": 2
+      }
+    },
+    {
+      "id": "GT-021",
+      "pregunta": "¿Qué tendencias estratégicas dominaron la era híbrida?",
+      "respuesta_esperada": "Dominio de Mercedes, importancia de la unidad de potencia, y cambio hacia estrategias de ahorro de neumáticos y energía.",
+      "respuesta_obtenida": "La era híbrida, que abarca desde 2014 hasta 2024, ha sido marcada por una serie de tendencias estratégicas en el mundo de la Fórmula 1. Una de las principales tendencias ha sido el aumento del papel de los equipos con recursos financieros importantes, como Mercedes y Ferrari, quienes han logrado dominar gran parte de la era híbrida gracias a su capacidad para invertir en tecnología avanzada y talento humano.\n\nOtra tendencia importante ha sido la evolución de las estrategias de carrera, donde los pilotos y equipos han comenzado a utilizar herramientas como el pit stop más rápido posible y la gestión del combustible para obtener ventajas competitivas. Además, la era híbrida también ha visto un aumento en la importancia de la aerodinámica, con escuderías que han invertido grandes sumas de dinero en desarrollar coches con características aerodinámicas cada vez más avanzadas.\n\nLa introducción de tecnologías como el motor híbrido y los sistemas de recuperación de energía también ha cambiado la dinámica del deporte, permitiendo a los equipos reducir su consumo de combustible y mejorar su eficiencia en pista. Finalmente, la era híbrida también ha visto un aumento en la participación de pilotos jóvenes y talentosos, como Charles Leclerc y Max Verstappen, quienes han comenzado a dejar su marca en el deporte.\n\nEn resumen, la era híbrida ha sido marcada por una serie de tendencias estratégicas que han cambiado la forma en que se disputa la Fórmula 1. Los equipos con recursos financieros importantes han dominado gran parte del período, mientras que las estrategias de carrera y la aerodinámica también han jugado un papel importante en el resultado final.",
+      "retriever": "VECTOR",
+      "cypher": null,
+      "latency_ms": 192382.0,
+      "tipo": "semantico",
+      "dificultad": "media",
+      "eval": {
+        "score": 0.8,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [],
+        "entidades_encontradas": 0
+      }
+    },
+    {
+      "id": "GT-022",
+      "pregunta": "En general, ¿qué estilo de dominio caracterizó la etapa de Mercedes frente a sus rivales?",
+      "respuesta_esperada": "Un dominio hegemónico basado en una unidad de potencia superior y una gran fiabilidad, con batallas internas (Hamilton-Rosberg) y luego contra Ferrari/Red Bull.",
+      "respuesta_obtenida": "Mercedes ha sido conocida por su dominio técnico y estratégico en la era híbrida, con una gran cantidad de victorias y títulos obtenidos gracias a su capacidad para desarrollar motores y chasis competitivos. Su estilo de dominio se caracterizó por una combinación de velocidad, eficiencia energética y consistencia a lo largo de las carreras y temporadas.",
+      "retriever": "VECTOR",
+      "cypher": null,
+      "latency_ms": 78023.0,
+      "tipo": "semantico",
+      "dificultad": "media",
+      "eval": {
+        "score": 1.0,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [],
+        "entidades_encontradas": 0
+      }
+    },
+    {
+      "id": "GT-023",
+      "pregunta": "Háblame sobre los grupos y patrones que surgieron en la era híbrida.",
+      "respuesta_esperada": "Se formaron claros grupos de poder: Mercedes como dominante, Ferrari y Red Bull como principales retadores, y la zona media muy disputada.",
+      "respuesta_obtenida": "Los grupos y patrones que surgieron en la era híbrida de la Fórmula 1 incluyen la presencia de escuderías británicas como ERA, HWM y Shadow, quienes compitieron en las primeras temporadas de la era. Estas escuderías se destacaron por su nacionalidad y participación en el deporte durante los años iniciales del híbrido.\n\nAdemás, se observa un patrón geográfico con eventos como el Gran Premio de México, que ha sido una ronda fija en la era híbrida. La ciudad de México ha albergado carreras importantes, incluyendo el Heineken Gran Premio de la Ciudad de México 2022 y el reciente Gran Premio de la Ciudad de México 2024.\n\nEn cuanto a los pilotos, figuras como Juan Manuel Fangio se destacan por su legado en el deporte. Fangio, un piloto argentino, es recordado por sus logros en las décadas de 1950 y 1960, pero también tiene relevancia en la era híbrida debido a su presencia en los registros.\n\nEn general, estos grupos y patrones reflejan la evolución del deporte a lo largo de la era híbrida, desde la participación de escuderías británicas hasta la importancia geográfica de eventos como el Gran Premio de México.",
+      "retriever": "VECTOR",
+      "cypher": null,
+      "latency_ms": 139152.0,
+      "tipo": "semantico",
+      "dificultad": "alta",
+      "eval": {
+        "score": 0.0,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [],
+        "entidades_encontradas": 0
+      }
+    },
+    {
+      "id": "GT-024",
+      "pregunta": "¿Cómo se agrupaban los equipos cliente alrededor de los principales motoristas en la era híbrida?",
+      "respuesta_esperada": "Mercedes motorizaba a equipos como Williams y Force India/Racing Point. Ferrari a Haas y Sauber/Alfa Romeo. Renault y Honda tuvieron menos clientes a lo largo de los años.",
+      "respuesta_obtenida": "Los equipos cliente, como AlphaTauri y McLaren, a menudo se agrupaban alrededor de los principales motoristas en la era híbrida. Por ejemplo, AlphaTauri utilizó motores de Honda y RBPT, mientras que McLaren usó motores de Mercedes, Honda y Renault. Esto sugiere que los equipos cliente tendían a asociarse con los principales constructores de motores para acceder a tecnología y recursos avanzados.",
+      "retriever": "VECTOR",
+      "cypher": null,
+      "latency_ms": 87343.0,
+      "tipo": "semantico",
+      "dificultad": "alta",
+      "eval": {
+        "score": 0.5,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [],
+        "entidades_encontradas": 0
+      }
+    },
+    {
+      "id": "GT-025",
+      "pregunta": "¿Qué circuitos son similares a Mónaco y qué pilotos han tenido éxito en ellos recientemente?",
+      "respuesta_esperada": "Circuitos urbanos o virados como Singapur o Hungaroring. Pilotos como Hamilton, Verstappen o Ricciardo suelen destacar.",
+      "respuesta_obtenida": "Los circuitos similares a Mónaco, conocidos por sus características técnicas únicas y desafiantes, incluyen el Circuito de Spa-Francorchamps y el Circuito de Silverstone. Estos circuitos tienen curvas cerradas, cambios de velocidad rápidos y requerimientos de habilidad para los pilotos.\n\nLos pilotos que han tenido éxito en estos circuitos recientemente son Lewis Hamilton y Max Verstappen, quienes han demostrado su habilidad en carreras con características similares a las del Circuito de Mónaco.",
+      "retriever": "HYBRID",
+      "cypher": null,
+      "latency_ms": 73234.0,
+      "tipo": "hibrido",
+      "dificultad": "media",
+      "eval": {
+        "score": 0.6,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [],
+        "entidades_encontradas": 0
+      }
+    },
+    {
+      "id": "GT-026",
+      "pregunta": "Considerando la historia reciente, ¿qué equipos tienen patrones similares a Williams pero han logrado más victorias?",
+      "respuesta_esperada": "Equipos cliente históricos que pasaron por baches, como McLaren, pero que han tenido más éxito reciente o victorias.",
+      "respuesta_obtenida": "Los equipos que tienen patrones similares a Williams pero han logrado más victorias son Virgin y Wolf-Williams.",
+      "retriever": "VECTOR",
+      "cypher": null,
+      "latency_ms": 56509.0,
+      "tipo": "hibrido",
+      "dificultad": "alta",
+      "eval": {
+        "score": 0.3,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [],
+        "entidades_encontradas": 0
+      }
+    },
+    {
+      "id": "GT-027",
+      "pregunta": "¿Cuál es el legado de la era híbrida en la Fórmula 1?",
+      "respuesta_esperada": "Mayor eficiencia térmica, el récord de campeonatos de constructores de Mercedes, y la transición hacia un campeonato dominado después por Red Bull.",
+      "respuesta_obtenida": "La era híbrida ha dejado un legado significativo en la Fórmula 1, marcada por la introducción del motor híbrido en 2014, lo que ha llevado a una mayor eficiencia energética y un aumento en la competitividad de las escuderías.",
+      "retriever": "VECTOR",
+      "cypher": null,
+      "latency_ms": 69241.0,
+      "tipo": "semantico",
+      "dificultad": "media",
+      "eval": {
+        "score": 0.8,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [],
+        "entidades_encontradas": 0
+      }
+    },
+    {
+      "id": "GT-028",
+      "pregunta": "Cuéntame sobre la rivalidad de los principales equipos en la primera mitad de la era híbrida.",
+      "respuesta_esperada": "Principalmente el dominio interno de Mercedes (Hamilton vs Rosberg) y posteriormente el reto de Sebastian Vettel con Ferrari.",
+      "respuesta_obtenida": "La rivalidad entre Mercedes y Ferrari fue una constante en la primera mitad de la era híbrida, con ambos equipos luchando por el dominio en las pistas.",
+      "retriever": "VECTOR",
+      "cypher": null,
+      "latency_ms": 65169.0,
+      "tipo": "semantico",
+      "dificultad": "media",
+      "eval": {
+        "score": 0.6,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [],
+        "entidades_encontradas": 0
+      }
+    },
+    {
+      "id": "GT-029",
+      "pregunta": "¿Qué circuitos de alta velocidad tienen un perfil similar a Monza?",
+      "respuesta_esperada": "Circuitos como Spa-Francorchamps o Silverstone, conocidos por sus largas rectas y alta dependencia del motor.",
+      "respuesta_obtenida": "Los circuitos de alta velocidad que tienen un perfil similar a Monza son los que poseen características como rectas largas, curvas rápidas y una longitud total considerable. Algunos ejemplos de estos circuitos incluyen Silverstone en el Reino Unido, Spa-Francorchamps en Bélgica y Suzuka en Japón. Estos circuitos comparten con Monza la cualidad de ser conocidos por sus aceleraciones rápidas y cambios de dirección bruscos, lo que los hace ideales para las carreras de alta velocidad.",
+      "retriever": "VECTOR",
+      "cypher": null,
+      "latency_ms": 88963.0,
+      "tipo": "hibrido",
+      "dificultad": "media",
+      "eval": {
+        "score": 0.9,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [],
+        "entidades_encontradas": 0
+      }
+    },
+    {
+      "id": "GT-030",
+      "pregunta": "¿Quiénes se consideran los mejores pilotos de la era híbrida en general y por qué?",
+      "respuesta_esperada": "Lewis Hamilton por sus campeonatos múltiples, y Max Verstappen por romper la hegemonía de Mercedes.",
+      "respuesta_obtenida": "Los mejores pilotos de la era híbrida en general son Lewis Hamilton, Sebastian Vettel, Fernando Alonso y Max Verstappen. Esto se debe a que han demostrado una consistencia y éxito notable durante las temporadas 2014-2024, logrando múltiples títulos mundiales y victorias en carreras clave.",
+      "retriever": "VECTOR",
+      "cypher": null,
+      "latency_ms": 68075.0,
+      "tipo": "semantico",
+      "dificultad": "media",
+      "eval": {
+        "score": 0.8,
+        "exactitud_numerica": 1.0,
+        "cobertura_entidades": 1.0,
+        "numeros_esperados": [],
+        "numeros_encontrados": 0,
+        "entidades_evaluadas": [],
+        "entidades_encontradas": 0
       }
     }
   ]

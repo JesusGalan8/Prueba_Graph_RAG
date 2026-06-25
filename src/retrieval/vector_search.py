@@ -82,6 +82,10 @@ class VectorSearchRetriever:
                 RETURN c.nombre + ' ' + toString(c.temporada) AS entidad,
                        collect(p.apellido + '(P' + toString(r.posicion_final) + ')') AS podio
             """,
+            "Comunidad": """
+                MATCH (c:Comunidad) WHERE id(c) = $nid
+                RETURN c.resumen AS entidad, c.nivel AS nivel
+            """,
         }
 
         q = expansions.get(label)
@@ -110,7 +114,7 @@ class VectorSearchRetriever:
         """
         t0 = time.time()
         if labels is None:
-            labels = ["Piloto", "Escuderia", "Carrera"]
+            labels = ["Piloto", "Escuderia", "Carrera", "Comunidad"]
 
         embedding = self._embed(question)
         all_results = []
@@ -142,8 +146,8 @@ class VectorSearchRetriever:
             labels = item.get("labels", [])
 
             label = labels[0] if labels else "Entidad"
-            desc  = node.get("descripcion", "")
-            nombre = node.get("nombre", node.get("apellido", node.get("fabricante", "")))
+            desc  = node.get("descripcion", node.get("resumen", ""))
+            nombre = node.get("nombre", node.get("apellido", node.get("fabricante", node.get("id", ""))))
 
             if desc:
                 lines.append(f"[{label}] {nombre} (relevancia: {score:.2f})\n  {desc}")

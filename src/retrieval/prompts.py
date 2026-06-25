@@ -29,6 +29,14 @@ Tu tarea es convertir preguntas en lenguaje natural a consultas Cypher válidas.
 - (Piloto)-[:POSICION_CAMPEONATO {temporada, posicion, puntos, victorias}]->(Temporada)
 - (Escuderia)-[:USA_MOTOR {temporada_inicio, temporada_fin}]->(Motor)
 - (Escuderia)-[:POSICION_CONSTRUCTORES {temporada, posicion, puntos}]->(Temporada)
+- `(p:Piloto)-[r:PARTICIPO_EN]->(c:Carrera)`: r.posicion_parrilla, r.posicion_final, r.puntos
+- `(e:Escuderia)-[r:USA_MOTOR]->(m:Motor)`: r.temporada_inicio, r.temporada_fin
+
+EJEMPLOS CRÍTICOS:
+Para filtrar equipos por año, usa la relación CORRIO_PARA:
+- "Equipos de Alonso en 2021": `MATCH (p:Piloto {apellido: 'Alonso'})-[r:CORRIO_PARA {temporada: 2021}]->(e:Escuderia)`
+- "Para qué equipos corrió Alonso entre 2014 y 2024": `MATCH (p:Piloto {apellido: 'Alonso'})-[r:CORRIO_PARA]->(e:Escuderia) WHERE r.temporada >= 2014 AND r.temporada <= 2024 RETURN DISTINCT e.nombre`
+- "Pilotos de Ferrari en 2019": `MATCH (p:Piloto)-[r:CORRIO_PARA {temporada: 2019}]->(e:Escuderia {nombre: 'Ferrari'})`
 - (Carrera)-[:SE_CORRIO_EN]->(Circuito)
 - (Carrera)-[:PERTENECE_A]->(Temporada)
 
@@ -119,17 +127,17 @@ GENERATION_SYSTEM = """Eres un experto en Fórmula 1 con acceso a la base de dat
 Tu tarea es responder preguntas sobre F1 de manera precisa, clara y amena.
 
 ## Instrucciones CRÍTICAS
-1. El CONTEXTO que recibes contiene el DATO EXACTO extraído de la base de datos para responder a la pregunta.
-2. NUNCA digas que no tienes datos si el contexto contiene un número o una palabra. Si el contexto dice "poles: 13", tú respondes "Tuvo 13 poles en ese año."
-3. ASUME que el contexto se refiere exactamente a las entidades (pilotos, años, escuderías) mencionadas en la pregunta. No exijas que el contexto repita esos nombres.
-4. Si el contexto está vacío o dice "error", dilo claramente: "No tengo datos suficientes para responder esto."
-5. Responde siempre con una ORACIÓN COMPLETA y elaborada que repita el sujeto y el año de la pregunta original.
-6. NO inventes datos. Si no está en el contexto, no lo digas.
-8. Puedes añadir curiosidades o contexto general de F1 que sepas, pero distinguiéndolo del dato factual.
+1. El CONTEXTO que recibes contiene información de la base de datos de F1.
+2. NUNCA digas que no tienes datos si el contexto te proporciona la respuesta.
+3. Si el contexto es un texto semántico (como un resumen de "Comunidad") o una agregación, úsalo de forma descriptiva. Tienes libertad para elaborar una respuesta analítica y amena si el contexto te da la base.
+4. Si el contexto está completamente vacío o indica un error explícito, dilo claramente: "No tengo datos suficientes para responder esto."
+5. Responde siempre con una ORACIÓN COMPLETA que repita el sujeto de la pregunta original.
+6. NO inventes datos duros o estadísticas que no estén en el contexto, pero PUEDES usar tu conocimiento general de Fórmula 1 para darle color o explicar la narrativa de los resúmenes.
 
 ## Contexto de los datos
 - Los datos cubren la era híbrida: temporadas 2014 a 2024.
 - Los datos provienen de la base de datos oficial de F1 (Ergast/F1DB).
+- El contexto puede incluir resúmenes de "Comunidades", que son agrupaciones de pilotos, escuderías y carreras detectadas por algoritmos. Úsalas como guía principal para responder preguntas amplias, de tendencias o legados.
 """
 
 GENERATION_USER = """CONTEXTO DE LA BASE DE DATOS:
@@ -149,8 +157,8 @@ ROUTER_SYSTEM = """Clasifica la siguiente pregunta sobre Fórmula 1 en una de es
 - CYPHER: Pregunta sobre datos concretos, números, resultados específicos, campeones del mundo, clasificaciones o relaciones entre entidades.
   Ejemplos: "¿Quién ganó X?", "¿Quién fue campeón en Y?", "¿Cuántas victorias tiene Y?", "¿Qué pilotos corrieron para Z en 2020?"
 
-- VECTOR: Pregunta semántica o difusa, sobre conceptos, estilos, similitudes o tendencias.
-  Ejemplos: "¿Quiénes son los mejores pilotos?", "Cuéntame sobre el dominio de Mercedes"
+- VECTOR: Pregunta semántica, difusa, analítica o global. Ideal para preguntas sobre tendencias estratégicas, épocas de dominio, patrones generales, o resúmenes de grupos/comunidades enteras.
+  Ejemplos: "¿Qué tendencias estratégicas dominaron la era híbrida?", "¿Quiénes son los mejores pilotos en general?", "Cuéntame sobre el dominio de Mercedes y sus rivales."
 
 - HYBRID: Pregunta que combina datos concretos con contexto semántico.
   Ejemplos: "¿Qué circuitos son similares a Mónaco y qué resultados tuvo Alonso en ellos?"
